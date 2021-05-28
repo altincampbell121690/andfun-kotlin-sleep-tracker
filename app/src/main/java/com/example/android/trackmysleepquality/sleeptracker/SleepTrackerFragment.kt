@@ -22,7 +22,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.android.trackmysleepquality.R
+import com.example.android.trackmysleepquality.database.SleepDatabase
 import com.example.android.trackmysleepquality.databinding.FragmentSleepTrackerBinding
 
 /**
@@ -43,6 +45,26 @@ class SleepTrackerFragment : Fragment() {
         // Get a reference to the binding object and inflate the fragment views.
         val binding: FragmentSleepTrackerBinding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_sleep_tracker, container, false)
+
+
+        /* TODO 1) we need a refence to the application context (null check of course)
+        * TODO 2) then we need to getting an instance of our data source so we can get data but we
+        *  -> dont need the whole table
+        *TODO 3a) we need to set up our viewmodel (since its custom we need a viewmodel factory
+        *****TODO 3b) create viewmodel factory
+        *  TODO 4)
+        * */
+        //TODO 1)
+        val application = requireNotNull(this.activity).application
+        //TODO 2) DEFINE DATA SOURCE
+        val dataSource = SleepDatabase.getInstance(application).sleepDatabaseDao
+        //TODO 3a)
+        val viewModelFactory = SleepTrackerViewModelFactory(dataSource,application)
+        //TODO 4) create new instance of viewModel using custom FACTORY
+        val sleepTrackerViewModel = ViewModelProvider(this,viewModelFactory).get(SleepTrackerViewModel::class.java)
+        // TODO 5) BIND
+        binding.lifecycleOwner = this
+        binding.sleepTrackerViewModel = sleepTrackerViewModel
 
         return binding.root
     }
