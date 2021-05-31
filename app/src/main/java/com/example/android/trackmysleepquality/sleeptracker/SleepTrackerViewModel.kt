@@ -33,6 +33,10 @@ class SleepTrackerViewModel(
         val database: SleepDatabaseDao,
         application: Application,
 ) : AndroidViewModel(application) { // takes application context for use
+
+
+
+
     //TODO (01) Define a variable, to hold ------- make mutableLiveData.
     private var tonight = MutableLiveData<SleepNight?>()
 
@@ -43,13 +47,36 @@ class SleepTrackerViewModel(
     val navigateToSleepQuality : MutableLiveData<SleepNight?>
         get() = _navigateToSleepQuality
 
-    fun doneNavigating(){
-        _navigateToSleepQuality.value = null
-    }
+
 
     val nightsString = Transformations.map(nights,{nights ->
         formatNights(nights,application.resources)
     })
+
+    //while tonight is null start should be visibile
+    val startButtonVisible = Transformations.map(tonight,{
+        null == it
+    })
+
+    //while tonight is not null stop should be visible
+    val stopButtonVisible = Transformations.map(tonight,{
+        null != it
+    })
+
+    val clearButtonVisible = Transformations.map(nights,{
+        it?.isNotEmpty()
+    })
+    fun doneNavigating(){
+        _navigateToSleepQuality.value = null
+    }
+
+    private var _showSnackBarEvent = MutableLiveData<Boolean>()
+    val showSnackBarEvent : LiveData<Boolean>
+        get() = _showSnackBarEvent
+
+    fun doneShowingSnackBar(){
+        _showSnackBarEvent.value = false
+    }
 
     //TODO (03) In an init block, initializeTonight(), and implement it to launch a coroutine
     // we want tonight to be available at start so we use an init block
@@ -102,6 +129,7 @@ class SleepTrackerViewModel(
                 viewModelScope.launch {
                         clear()
                         tonight.value = null
+                    _showSnackBarEvent.value = true
                 }
         }
 
