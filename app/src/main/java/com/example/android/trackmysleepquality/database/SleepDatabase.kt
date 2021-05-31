@@ -50,6 +50,7 @@ abstract class SleepDatabase : RoomDatabase() {
                     ).fallbackToDestructiveMigration().build()
                     // USUALLY if we change the db shcema we need a way to convert
                 // old to new thats migration
+                    INSTANCE = instance
                 }
 
                 return instance

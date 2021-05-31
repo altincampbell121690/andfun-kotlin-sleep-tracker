@@ -17,10 +17,7 @@
 package com.example.android.trackmysleepquality.sleeptracker
 
 import android.app.Application
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import com.example.android.trackmysleepquality.database.SleepDatabaseDao
 import com.example.android.trackmysleepquality.database.SleepNight
 import com.example.android.trackmysleepquality.formatNights
@@ -42,7 +39,13 @@ class SleepTrackerViewModel(
     //TODO (02) Define a variable, nights. Then getAllNights() from the database.
     private val nights = database.getAllNights()
 
-    
+    private val _navigateToSleepQuality = MutableLiveData<SleepNight?>()
+    val navigateToSleepQuality : MutableLiveData<SleepNight?>
+        get() = _navigateToSleepQuality
+
+    fun doneNavigating(){
+        _navigateToSleepQuality.value = null
+    }
 
     val nightsString = Transformations.map(nights,{nights ->
         formatNights(nights,application.resources)
@@ -51,7 +54,7 @@ class SleepTrackerViewModel(
     //TODO (03) In an init block, initializeTonight(), and implement it to launch a coroutine
     // we want tonight to be available at start so we use an init block
     init {
-        initializeTonight() // we impliment this with a coroutine so it doesnt block main thread
+        initializeTonight() // we implement this with a coroutine so it doesnt block main thread
     }
 
     private fun initializeTonight() {
@@ -87,6 +90,7 @@ class SleepTrackerViewModel(
             oldNight.endTimeMilli = System.currentTimeMillis()
             update(oldNight)
 
+            _navigateToSleepQuality.value = oldNight
         }
     }
 
