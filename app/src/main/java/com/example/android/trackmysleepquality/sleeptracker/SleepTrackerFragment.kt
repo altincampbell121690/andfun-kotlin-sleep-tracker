@@ -76,7 +76,8 @@ class SleepTrackerFragment : Fragment() {
         binding.sleepList.adapter = adapter
         sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer { it: List<SleepNight>? ->
             it?.let{
-               adapter.dataList = it
+               adapter.submitList(it) // now used to update the list (method from ListAdapter interface)
+                //diff the new list verse the old one and updates the items
            }
         })
 
