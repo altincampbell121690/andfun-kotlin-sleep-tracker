@@ -44,9 +44,12 @@ class SleepTrackerViewModel(
     val nights = database.getAllNights()
 
     private val _navigateToSleepQuality = MutableLiveData<SleepNight?>()
-    val navigateToSleepQuality : MutableLiveData<SleepNight?>
+    val navigateToSleepQuality : LiveData<SleepNight?>
         get() = _navigateToSleepQuality
 
+    private val _navigateToSleepDataQuality = MutableLiveData<Long?>()
+    val navigateToSleepDataQuality : LiveData<Long?>
+        get() = _navigateToSleepDataQuality
 
 
     val nightsString = Transformations.map(nights,{nights ->
@@ -136,6 +139,15 @@ class SleepTrackerViewModel(
         suspend fun clear(){
                 database.clear()
         }
+
+    fun onSleepNightClicked(nightId: Long) {
+        _navigateToSleepDataQuality.value = nightId
+    }
+
+    fun onSleepDataQualityNavigated(){
+        _navigateToSleepDataQuality.value = null
+    }
+
 }
 
 

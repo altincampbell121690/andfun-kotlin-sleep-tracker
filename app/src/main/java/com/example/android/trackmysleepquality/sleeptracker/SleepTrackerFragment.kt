@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -77,8 +78,18 @@ class SleepTrackerFragment : Fragment() {
         var manager = GridLayoutManager(application,3)
         binding.sleepList.layoutManager = manager
 
-        var adapter = SleepNightAdapter()
+        val adapter = SleepNightAdapter(SleepNightListener {
+            nightId -> sleepTrackerViewModel.onSleepNightClicked(nightId)
+        })
         binding.sleepList.adapter = adapter
+
+        sleepTrackerViewModel.navigateToSleepDataQuality.observe(this.viewLifecycleOwner,{night->
+            night?.let{
+                findNavController().navigate(SleepTrackerFragmentDirections.actionSleepTrackerFragmentToSleepDetailFragment(night))
+                sleepTrackerViewModel.onSleepDataQualityNavigated()
+            }
+        })
+
         sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer { it: List<SleepNight>? ->
             it?.let{
                adapter.submitList(it) // now used to update the list (method from ListAdapter interface)

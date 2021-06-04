@@ -44,4 +44,9 @@ fun getAllNights() : LiveData<List<SleepNight>>
 // TODO (07) Add annotated getTonight() method and query.
 @Query("SELECT * FROM daily_sleep_quality_table order by nightId desc limit 1")
 suspend fun getTonight():SleepNight?
+    /**
+     * Selects and returns the night with given nightId.
+     */
+    @Query("SELECT * from daily_sleep_quality_table WHERE nightId = :key")
+    fun getNightWithId(key: Long): LiveData<SleepNight>
 }
